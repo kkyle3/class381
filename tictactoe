@@ -1,0 +1,64 @@
+import numpy as np
+import random
+
+board = np.zeros((3,3), dtype=int)
+
+def print_board(board):
+    print("   0  1  2")
+    for i in range(len(board)):
+        row_str = str(i) + " |"
+        for j in range(len(board[i])):
+            if board[i][j] == 1:
+                row_str += " X |"
+            elif board[i][j] == 2:
+                row_str += " O |"
+            else:
+                row_str += "   |"
+        print(row_str)
+
+def get_move(player, board):
+    valid_move = False
+    while not valid_move:
+        row = input(f"Player {player}, enter row (0-2): ")
+        col = input(f"Player {player}, enter column (0-2): ")
+        if row.isdigit() and col.isdigit():
+            row = int(row)
+            col = int(col)
+            if row >= 0 and row < 3 and col >= 0 and col < 3 and board[row][col] == 0:
+                valid_move = True
+    board[row][col] = player
+    print_board(board)
+
+def check_winner(board):
+    for i in range(len(board)):
+        # Check rows
+        if board[i][0] == board[i][1] == board[i][2] != 0:
+            return board[i][0]
+        # Check columns
+        if board[0][i] == board[1][i] == board[2][i] != 0:
+            return board[0][i]
+    # Check diagonals
+    if board[0][0] == board[1][1] == board[2][2] != 0:
+        return board[0][0]
+    if board[0][2] == board[1][1] == board[2][0] != 0:
+        return board[0][2]
+    # Check for tie
+    if np.count_nonzero(board) == 9:
+        return -1
+    return 0
+
+# Main game loop
+print_board(board)
+player = 1
+winner = 0
+while winner == 0:
+    get_move(player, board)
+    winner = check_winner(board)
+    if player == 1:
+        player = 2
+    else:
+        player = 1
+if winner == -1:
+    print("Tie game!")
+else:
+    print(f"Player {winner} wins!")
